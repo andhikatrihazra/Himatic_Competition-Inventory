@@ -32,7 +32,7 @@ class PrinterService
             Log::info('Mulai mencetak nota: ' . ($isFirst ? 'ASLI' : 'COPY'));
             
             $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-            $this->printer->text("TOKO KITA\n");
+            $this->printer->text("TOKO BU BUDI\n");
             $this->printer->text("Jl. Jalan Kemana-mana No. 123\n");
             $this->printer->text("Telp: 08123456789\n");
             $this->printer->text("--------------------------------\n");
