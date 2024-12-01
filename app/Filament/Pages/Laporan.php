@@ -59,7 +59,7 @@ class Laporan extends Page implements Tables\Contracts\HasTable
             TextColumn::make('total_item')
                 ->label('Jumlah Total Item Terjual')
                 ->alignCenter()
-                ->summarize(Sum::make()->money('idr')
+                ->summarize(Sum::make()
                 ->prefix('Total : ')
                 ),  
 
