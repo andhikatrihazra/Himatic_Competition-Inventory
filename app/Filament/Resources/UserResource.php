@@ -81,7 +81,7 @@ class UserResource extends Resource
 
                     BadgeColumn::make('roles.name')
                     ->color(fn ($state) => match ($state) {
-                        'super_admin' => 'danger', // Red for admin
+                        'admin' => 'danger', // Red for admin
                         'user' => 'primary', // Blue for user admin
                         default => 'gray', // Default color for other roles
                     })
