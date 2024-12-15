@@ -16,14 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InboundProductResource extends Resource
 {
     protected static ?string $model = InboundProduct::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-arrow-down-circle';
     protected static ?string $navigationGroup = 'In | Out Product';
-
     protected static ?int $navigationSort = 2;
-
-
-
     public static function form(Form $form): Form
     {
         return $form
