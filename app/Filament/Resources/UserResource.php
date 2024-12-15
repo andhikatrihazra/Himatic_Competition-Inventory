@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Fieldset;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
 use App\Filament\Resources\UserResource\Pages;
 
 class UserResource extends Resource
@@ -78,12 +79,13 @@ class UserResource extends Resource
                     ->searchable()
                     ->label('Email'),
 
-                    TextColumn::make('roles.name')
-                    ->label('Roles')
-                    ->sortable()
-                    ->searchable()
-                    ->toggleable()
-                    ->badge(fn ($state) => $state && is_array($state) ? 'badge-' . strtolower(implode(', ', $state)) : 'badge-default')
+                    BadgeColumn::make('roles.name')
+                    ->color(fn ($state) => match ($state) {
+                        'super_admin' => 'danger', // Red for admin
+                        'user' => 'primary', // Blue for user admin
+                        default => 'gray', // Default color for other roles
+                    })
+                
                 
             ])
             ->filters([
