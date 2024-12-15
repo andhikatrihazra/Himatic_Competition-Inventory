@@ -13,6 +13,7 @@ use Hasnayeen\Themes\Http\Middleware\SetTheme;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -56,13 +57,81 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 SetTheme::class,
             ])
-            ->plugin(
-                ThemesPlugin::make()
+            ->plugins([
+                ThemesPlugin::make(),
+                FilamentShieldPlugin::make(),
 
-            )
+            ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
-            
+            ]);            
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+        
+            
+            
+            
+            
+            
+            
+                
+            
+            
+            
+            
+            
+                
+            
+            
+            
+                
+                
+            
+            
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            
+            
+                
+
+            
+            
+                
+            
+            
+    
+
