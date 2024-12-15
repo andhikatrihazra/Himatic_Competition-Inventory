@@ -12,6 +12,7 @@ class PivotOutboundProduct extends Model
         'product_quantity',
         'product_selling_price',
         'subtotal',
+        'stock'
     ];
 
     public function product()

@@ -33,18 +33,17 @@ class OutboundProductResource extends Resource
                 ->schema([
                     Repeater::make('PivotOutboundProduct')
                     ->relationship('PivotOutboundProduct')
-                    ->columns(4)
+                    ->columns(5)
                     ->schema([
                         Select::make('product_id')
-                            ->options(
-                                $products->mapWithKeys(function (Product $product) {
-                                    return [$product->id => sprintf('%s (Stock: %d, Rp %s)', 
-                                        $product->name, 
-                                        $product->stock, 
-                                        number_format($product->selling_price, 0, ',', '.')
-                                    )];
-                                })
-                            )
+                        ->label('Product')
+                        ->options(
+                            $products->pluck('name', 'id')
+                        )
+                        ->reactive() 
+                        ->afterStateUpdated(fn ($state, callable $set) => 
+                            $set('stock', optional($products->firstWhere('id', $state))->stock)
+                        )
                             ->searchable()
                             ->required()
                             ->afterStateUpdated(function ($state, callable $get, callable $set) {
@@ -58,6 +57,12 @@ class OutboundProductResource extends Resource
                                 $set('product_selling_price', $pricePerUnit);
                                 $set('subtotal', $pricePerUnit * $quantity);
                             }),
+                        
+                        TextInput::make('stock')
+                        ->label('Stock')
+                        ->readonly(),
+                        // ->disabled()
+                        // ->hidden(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\EditRecord || $livewire instanceof \Filament\Resources\Pages\ViewRecord),
 
                         TextInput::make('product_quantity')
                             ->label('Quantity')
@@ -193,6 +198,7 @@ class OutboundProductResource extends Resource
                     })
                     ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
