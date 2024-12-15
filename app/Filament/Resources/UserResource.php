@@ -26,8 +26,6 @@ class UserResource extends Resource
 
     protected static ?string $pluralLabel = 'Users';
 
-    protected static ?int $navigationSort = 1000; // Nilai besar agar muncul di bagian bawah
-
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
