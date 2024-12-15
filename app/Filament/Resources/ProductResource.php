@@ -74,25 +74,30 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                ->label('Nama Produk'),
                 BadgeColumn::make('category.name')
                     ->color(fn ($state) => match ($state) {
                         'Rokok' => 'danger',  // Sesuaikan dengan warna yang diinginkan
                         'Jajanan' => 'success', // Sesuaikan dengan warna yang diinginkan
                         'published' => 'primary', // Sesuaikan dengan warna yang diinginkan
                         default => 'gray', // Warna default
-                    }),
+                    })
+                    ->label('Kategori'),
                 TextColumn::make('purchase_price')
                     ->formatStateUsing(function ($state) {
                         return 'Rp ' . number_format($state, 0, ',', '.');
                     })
-                    ->alignCenter(),        
+                    ->alignCenter()
+                    ->label('Harga Beli'),
                 TextColumn::make('selling_price')
                     ->formatStateUsing(function ($state) {
                         return 'Rp ' . number_format($state, 0, ',', '.');
                     })
-                    ->alignCenter(),        
-                TextColumn::make('stock'),
+                    ->alignCenter()
+                    ->label('Harga Jual'),
+                TextColumn::make('stock')
+                ->label('Stok'),
             ])
             ->filters([
                 //
