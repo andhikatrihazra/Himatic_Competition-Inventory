@@ -21,7 +21,8 @@ class OutboundProductResource extends Resource
 {
     protected static ?string $model = OutboundProduct::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-up-circle';
+    protected static ?string $navigationGroup = 'In | Out Product';
 
     public static function form(Form $form): Form
     {
