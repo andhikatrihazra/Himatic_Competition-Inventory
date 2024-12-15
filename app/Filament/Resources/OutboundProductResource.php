@@ -32,33 +32,43 @@ class OutboundProductResource extends Resource
             Section::make('Outbound Product Details')
                 ->schema([
                     Repeater::make('PivotOutboundProduct')
-                        ->relationship('PivotOutboundProduct')
-                        ->columns(4)
-                        ->schema([
-                            Select::make('product_id')
-                                ->options(
-                                    $products->mapWithKeys(function (Product $product) {
-                                        return [$product->id => sprintf('%s (Rp %s)', $product->name, number_format($product->selling_price, 0, ',', '.'))];
-                                    })
-                                )
-                                ->searchable()
-                                ->required()
-                                ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                                    $pricePerUnit = optional(Product::find($state))->selling_price;
-                                    $quantity = $get('product_quantity') ?? 1;
-                                    $set('product_selling_price', $pricePerUnit);
-                                    $set('subtotal', $pricePerUnit * $quantity);
-                                }),
+                    ->relationship('PivotOutboundProduct')
+                    ->columns(4)
+                    ->schema([
+                        Select::make('product_id')
+                            ->options(
+                                $products->mapWithKeys(function (Product $product) {
+                                    return [$product->id => sprintf('%s (Stock: %d, Rp %s)', 
+                                        $product->name, 
+                                        $product->stock, 
+                                        number_format($product->selling_price, 0, ',', '.')
+                                    )];
+                                })
+                            )
+                            ->searchable()
+                            ->required()
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                $product = Product::find($state);
+                                $pricePerUnit = $product->selling_price;
+                                $quantity = $get('product_quantity') ?? 1;
+                                
+                                // Add stock availability validation
+                                $set('max_quantity', $product->stock);
+                                
+                                $set('product_selling_price', $pricePerUnit);
+                                $set('subtotal', $pricePerUnit * $quantity);
+                            }),
 
-                            TextInput::make('product_quantity')
-                                ->label('Quantity')
-                                ->integer()
-                                ->default(1)
-                                ->required()
-                                ->afterStateUpdated(function ($state, callable $get, callable $set) {
-                                    $pricePerUnit = $get('product_selling_price');
-                                    $set('subtotal', $pricePerUnit * $state);
-                                }),
+                        TextInput::make('product_quantity')
+                            ->label('Quantity')
+                            ->integer()
+                            ->default(1)
+                            ->required()
+                            ->maxValue(fn($get) => $get('max_quantity') ?? 0)
+                            ->afterStateUpdated(function ($state, callable $get, callable $set) {
+                                $pricePerUnit = $get('product_selling_price');
+                                $set('subtotal', $pricePerUnit * $state);
+                            }),
 
                             TextInput::make('product_selling_price')
                                 ->label('Selling Price')
