@@ -60,11 +60,11 @@ class ProductResource extends Resource
                     TextInput::make('selling_price')
                         ->required()
                         ->numeric()
-                        ->label('Harga Pembelian'),
+                        ->label('Harga Penjualan'),
                     TextInput::make('stock')
                         ->required()
                         ->numeric()
-                        ->label('Harga Pembelian'),
+                        ->label('Stock Awal'),
                 ])
                 ->columns(1),
         ]);
