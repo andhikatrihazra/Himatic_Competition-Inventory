@@ -46,12 +46,12 @@ class UserResource extends Resource
                         ->maxLength(255),
         
                         TextInput::make('password')
-                        ->required(fn ($record) => !$record->exists) // Ubah kondisi ini
+                        ->required(fn ($record) => $record ? !$record->exists : true) // Ensure $record is not null
                         ->password()
                         ->minLength(8)
                         ->label('Password')
-                        ->dehydrated(fn ($state) => filled($state)) // Tambahkan ini
-                        ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null), //
+                        ->dehydrated(fn ($state) => filled($state))
+                        ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null),
                     
         
                     Select::make('roles')
