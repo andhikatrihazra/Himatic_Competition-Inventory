@@ -22,7 +22,7 @@ class CreateOutboundProduct extends CreateRecord
             $outboundProduct = $this->record;
 
             // Iterate through the pivot outbound products
-            foreach ($outboundProduct->PivotOutboundProduct as $pivotProduct) {
+            foreach ($outboundProduct->PivotInboundProduct as $pivotProduct) {
                 // Find the corresponding product
                 $product = Product::findOrFail($pivotProduct->product_id);
 
