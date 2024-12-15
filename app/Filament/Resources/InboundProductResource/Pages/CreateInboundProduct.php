@@ -8,6 +8,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\Product;
 
+
 class CreateInboundProduct extends CreateRecord
 {
     protected static string $resource = InboundProductResource::class;

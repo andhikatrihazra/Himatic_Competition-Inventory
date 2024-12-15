@@ -8,6 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\OutboundProductResource;
 use App\Models\Product;
 
+
 class CreateOutboundProduct extends CreateRecord
 {
     protected static string $resource = OutboundProductResource::class;
