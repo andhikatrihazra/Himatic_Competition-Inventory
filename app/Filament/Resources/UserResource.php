@@ -46,11 +46,14 @@ class UserResource extends Resource
                         ->email()
                         ->maxLength(255),
         
-                    TextInput::make('password')
-                        ->required(fn ($record) => !$record) // Password hanya wajib saat membuat user baru
-                        ->password() // Menjadikan field password
+                        TextInput::make('password')
+                        ->required(fn ($record) => !$record->exists) // Ubah kondisi ini
+                        ->password()
                         ->minLength(8)
-                        ->label('Password'),
+                        ->label('Password')
+                        ->dehydrated(fn ($state) => filled($state)) // Tambahkan ini
+                        ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null), //
+                    
         
                     Select::make('roles')
                         ->relationship('roles', 'name') // Menarik data dari relationship
