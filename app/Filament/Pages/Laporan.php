@@ -58,7 +58,10 @@ class Laporan extends Page implements Tables\Contracts\HasTable
 
             TextColumn::make('total_item')
                 ->label('Jumlah Total Item Terjual')
-                ->alignCenter(),
+                ->alignCenter()
+                ->summarize(Sum::make()->money('idr')
+                ->prefix('Total : ')
+                ),  
 
             TextColumn::make('pendapatan_kotor')
             ->label('Pendapatan Kotor')
@@ -66,7 +69,10 @@ class Laporan extends Page implements Tables\Contracts\HasTable
             ->formatStateUsing(function ($state) {
                 return 'Rp ' . number_format($state, 0, ',', '.');
             })
-            ->alignEnd(),
+            ->alignEnd()
+            ->summarize(Sum::make()->money('idr')
+            ->prefix('Total : ')
+            ),  
 
             TextColumn::make('total_harga_modal')
             ->label('Total Harga Modal')
@@ -74,8 +80,11 @@ class Laporan extends Page implements Tables\Contracts\HasTable
             ->formatStateUsing(function ($state) {
                 return 'Rp ' . number_format($state, 0, ',', '.');
             })
-            ->alignEnd(),
-    
+            ->alignEnd()
+            ->summarize(Sum::make()->money('idr')
+            ->prefix('Total : ')
+            ),  
+
             TextColumn::make('pendapatan_bersih')
                 ->label('Pendapatan Bersih')
                 ->alignEnd()
@@ -83,8 +92,8 @@ class Laporan extends Page implements Tables\Contracts\HasTable
                     return 'Rp ' . number_format($state ?: 0, 0, ',', '.');
                 })
                 ->summarize(Sum::make()->money('idr')
-                    ->prefix('Total Keuntungan : ')
-            ),  
+                    ->prefix('Total : ')
+                ),  
         ];
     }
     protected function getTableFilters(): array
