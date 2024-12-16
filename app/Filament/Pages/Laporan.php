@@ -10,8 +10,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Widgets\TotalProfitWidget;
-use App\Filament\Widgets\TotalProfitThisMonthWidget;
+use Filament\Tables\Columns\Summarizers\Sum;
 
 class Laporan extends Page implements Tables\Contracts\HasTable
 {
@@ -25,7 +24,6 @@ class Laporan extends Page implements Tables\Contracts\HasTable
     {
         return [
             LaporanWidget::class, 
-            // TotalProfitThisMonthWidget::class,
         ];
     }
     protected function getTableHeaderActions(): array
@@ -36,7 +34,7 @@ class Laporan extends Page implements Tables\Contracts\HasTable
             ->color('danger')
             ->icon('heroicon-o-document')
             // ->url(route('laporan.export.pdf'))
-            ->openUrlInNewTab(), // Membuka di tab baru agar tidak menggangu halaman
+            ->openUrlInNewTab(),
     ];
 }
 
@@ -47,12 +45,10 @@ class Laporan extends Page implements Tables\Contracts\HasTable
         ->selectRaw('SUM(total) as pendapatan_kotor')
         ->selectRaw('SUM(total_purchase_price) as total_harga_modal')
         ->selectRaw('SUM(quantity_total) as total_item')
-        ->selectRaw('SUM(profits) as laba')
+        ->selectRaw('SUM(profits) as pendapatan_bersih')
         ->groupBy('date')
         ->orderBy('date', 'desc');
     }
-
-    // This method defines the columns to display in the table
     protected function getTableColumns(): array
     {
         return [
@@ -66,25 +62,35 @@ class Laporan extends Page implements Tables\Contracts\HasTable
                 ->alignCenter(),
                 // ->sortable(),
 
-                TextColumn::make('total_harga_modal')
-                ->label('Total Harga Modal')
-                ->money('idr')
-                ->formatStateUsing(function ($state) {
-                    return 'Rp ' . number_format($state, 0, ',', '.');
-                })
-                ->alignEnd(),
+            TextColumn::make('pendapatan_kotor')
+            ->label('Pendapatan Kotor')
+            ->money('idr')
+            ->formatStateUsing(function ($state) {
+                return 'Rp ' . number_format($state, 0, ',', '.');
+            })
+            ->alignEnd(),
+
+            TextColumn::make('total_harga_modal')
+            ->label('Total Harga Modal')
+            ->money('idr')
+            ->formatStateUsing(function ($state) {
+                return 'Rp ' . number_format($state, 0, ',', '.');
+            })
+            ->alignEnd(),
     
-            TextColumn::make('laba')
-                ->label('Laba')
+            TextColumn::make('pendapatan_bersih')
+                ->label('Pendapatan Bersih')
                 ->alignEnd()
                 ->formatStateUsing(function ($state) {
                     return 'Rp ' . number_format($state ?: 0, 0, ',', '.');
-                }),
+                })
+                ->summarize(Sum::make()->money('idr')
+                    ->prefix('Total Keuntungan : ')
+            ),  
+
                 // ->sortable(),
         ];
     }
-
-    // Filter form for the table
     protected function getTableFilters(): array
     {
         return [
@@ -102,8 +108,6 @@ class Laporan extends Page implements Tables\Contracts\HasTable
                 }),
         ];
     }
-
-    // Custom record key
     public function getTableRecordKey($record): string
     {
         return $record->date ? (string) $record->date : uniqid();
