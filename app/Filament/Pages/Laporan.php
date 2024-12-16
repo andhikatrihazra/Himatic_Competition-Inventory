@@ -26,18 +26,18 @@ class Laporan extends Page implements Tables\Contracts\HasTable
             LaporanWidget::class, 
         ];
     }
-    protected function getTableHeaderActions(): array
-{
-    return [
-        Tables\Actions\Action::make('export')
-            ->button()
-            ->color('danger')
-            ->icon('heroicon-o-document')
-            // ->url(route('laporan.export.pdf'))
-            ->openUrlInNewTab(),
-    ];
-}
 
+    protected function getTableHeaderActions(): array
+    {
+        return [
+            Tables\Actions\Action::make('export')
+                ->button()
+                ->color('danger')
+                ->icon('heroicon-o-document')
+                ->url(route('laporan.export.pdf'))  
+                ->openUrlInNewTab(),
+        ];
+    }
     protected function getTableQuery(): Builder
 {
     return OutboundProduct::query()
@@ -54,13 +54,11 @@ class Laporan extends Page implements Tables\Contracts\HasTable
         return [
             TextColumn::make('date')
                 ->label('Tanggal')
-                // ->sortable()
                 ->date('d-m-Y'),
 
             TextColumn::make('total_item')
                 ->label('Jumlah Total Item Terjual')
                 ->alignCenter(),
-                // ->sortable(),
 
             TextColumn::make('pendapatan_kotor')
             ->label('Pendapatan Kotor')
@@ -87,8 +85,6 @@ class Laporan extends Page implements Tables\Contracts\HasTable
                 ->summarize(Sum::make()->money('idr')
                     ->prefix('Total Keuntungan : ')
             ),  
-
-                // ->sortable(),
         ];
     }
     protected function getTableFilters(): array
