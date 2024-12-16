@@ -2,13 +2,16 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\OutboundProduct;
-use Filament\Pages\Page;
+use App\Filament\Widgets\LaporanWidget;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Pages\Page;
+use App\Models\OutboundProduct;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Widgets\TotalProfitWidget;
+use App\Filament\Widgets\TotalProfitThisMonthWidget;
 
 class Laporan extends Page implements Tables\Contracts\HasTable
 {
@@ -18,7 +21,24 @@ class Laporan extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament.pages.laporan';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    // This method is used to define the query for the table data
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            LaporanWidget::class, 
+            // TotalProfitThisMonthWidget::class,
+        ];
+    }
+    protected function getTableHeaderActions(): array
+{
+    return [
+        Tables\Actions\Action::make('export')
+            ->button()
+            ->color('danger')
+            ->icon('heroicon-o-document')
+            // ->url(route('laporan.export.pdf'))
+            ->openUrlInNewTab(), // Membuka di tab baru agar tidak menggangu halaman
+    ];
+}
 
     protected function getTableQuery(): Builder
 {
