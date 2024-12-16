@@ -116,6 +116,18 @@ class OutboundProductResource extends Resource
                         ->readOnly()
                         ->prefix('Rp'),
 
+                    TextInput::make('total_purchase_price')
+                        ->label('Total Harga Modal')
+                        ->numeric()
+                        ->prefix('Rp')
+                        ->readOnly(),
+            
+                    TextInput::make('profits')
+                        ->label('Profit')
+                        ->numeric()
+                        ->prefix('Rp')
+                        ->readOnly(),
+
                     TextInput::make('date')
                         ->type('date')
                         ->required()
@@ -124,20 +136,37 @@ class OutboundProductResource extends Resource
                 
         ]);
     }
-
     public static function updateTotals($get, $set): void
-    {
-        $selectedProducts = collect($get('PivotOutboundProduct'))->filter(fn($item) => !empty($item['product_id']) && !empty($item['product_quantity']));
-        $prices = Product::find($selectedProducts->pluck('product_id'))->pluck('selling_price', 'id');
+{
+    $selectedProducts = collect($get('PivotOutboundProduct'))
+        ->filter(fn($item) => 
+            !empty($item['product_id']) && 
+            !empty($item['product_quantity'])
+        );
 
-        $total = $selectedProducts->reduce(function ($total, $product) use ($prices) {
-            return $total + ($prices[$product['product_id']] * $product['product_quantity']);
-        }, 0);
+    $products = Product::find($selectedProducts->pluck('product_id'));
 
-        $totalQuantity = $selectedProducts->sum('product_quantity');
-        
-        $set('quantity_total', $totalQuantity);
-        $set('total', $total);
+    // Hitung total penjualan (revenue)
+    $total = $selectedProducts->reduce(function ($total, $product) use ($products) {
+        $productModel = $products->firstWhere('id', $product['product_id']);
+        return $total + ($productModel->selling_price * $product['product_quantity']);
+    }, 0);
+
+    // Hitung total harga modal (purchase price)
+    $totalPurchasePrice = $selectedProducts->reduce(function ($total, $product) use ($products) {
+        $productModel = $products->firstWhere('id', $product['product_id']);
+        return $total + ($productModel->purchase_price * $product['product_quantity']);
+    }, 0);
+
+    // Hitung profits
+    $profits = $total - $totalPurchasePrice;
+
+    $totalQuantity = $selectedProducts->sum('product_quantity');
+    
+    $set('quantity_total', $totalQuantity);
+    $set('total', $total);
+    $set('total_purchase_price', $totalPurchasePrice);
+    $set('profits', $profits);
     }
 
     public static function generateOutboundNumber()

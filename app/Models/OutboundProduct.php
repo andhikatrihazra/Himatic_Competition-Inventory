@@ -10,6 +10,8 @@ class OutboundProduct extends Model
         'outbound_product_number',
         'quantity_total',
         'total',
+        'total_purchase_price',
+        'profits',
         'date',
     ];
 
