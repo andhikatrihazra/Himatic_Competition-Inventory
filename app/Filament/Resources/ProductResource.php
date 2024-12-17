@@ -26,9 +26,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down';
     protected static ?string $navigationGroup = 'Product Management';
-
-    protected static ?string $activeNavigationLabel = 'Produk';
-
+    protected static ?string $navigationLabel = 'Produk';
     public static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();

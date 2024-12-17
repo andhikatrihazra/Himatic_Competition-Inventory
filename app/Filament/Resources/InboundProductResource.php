@@ -9,12 +9,15 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\InboundProduct;
 use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\InboundProductResource\Pages;
 use App\Filament\Resources\InboundProductResource\RelationManagers;
@@ -24,6 +27,7 @@ class InboundProductResource extends Resource
     protected static ?string $model = InboundProduct::class;
     protected static ?string $navigationIcon = 'heroicon-o-arrow-down-circle';
     protected static ?string $navigationGroup = 'In | Out Product';
+    protected static ?string $navigationLabel = 'Barang Masuk';
 
     protected static ?int $navigationSort = 2;
 
@@ -55,9 +59,6 @@ class InboundProductResource extends Resource
                             $pricePerUnit = $product->purchase_price;
                             $quantity = $get('product_quantity') ?? 1;
                             
-                            // Add stock availability validation
-                            // $set('max_quantity', $product->stock);
-                            
                             $set('product_purchase_price', $pricePerUnit);
                             $set('subtotal', $pricePerUnit * $quantity);
                         }),
@@ -71,7 +72,6 @@ class InboundProductResource extends Resource
                             ->integer()
                             ->default(1)
                             ->required()
-                            // ->maxValue(fn($get) => $get('max_quantity') ?? 0)
                             ->afterStateUpdated(function ($state, callable $get, callable $set) {
                                 $pricePerUnit = $get('product_purchase_price');
                                 $set('subtotal', $pricePerUnit * $state);
@@ -194,16 +194,37 @@ class InboundProductResource extends Resource
             ->columns([
                 TextColumn::make('date')->label('Date')->sortable(),
                 TextColumn::make('inbound_product_number')->label('Inbound Number')->sortable(),
-                TextColumn::make('quantity_total')->label('Total Quantity')->sortable(),
+                TextColumn::make('quantity_total')
+                ->label('Total Quantity')
+                ->sortable()
+                ->summarize(Sum::make()
+                ->prefix('Total : ')
+                ),  
                 TextColumn::make('total')
                     ->label('Total')
                     ->formatStateUsing(function ($state) {
                         return 'Rp ' . number_format((float)$state, 0, ',', '.');
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->money('idr')
+                    ->prefix('Total : ')
+                    ),  
             ])
             ->defaultSort('created_at', 'desc')
-            ->filters([])
+            ->filters([
+                Filter::make('Rentang Tanggal')
+                ->form([
+                    DatePicker::make('tanggal_awal')->label('Tanggal Awal'),
+                    DatePicker::make('tanggal_akhir')->label('Tanggal Akhir'),
+                ])
+                ->query(function ($query, array $data) {
+                    return $query
+                        ->when($data['tanggal_awal'] ?? null, 
+                            fn ($query, $date) => $query->where('date', '>=', $date))
+                        ->when($data['tanggal_akhir'] ?? null, 
+                            fn ($query, $date) => $query->where('date', '<=', $date));
+                }),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),

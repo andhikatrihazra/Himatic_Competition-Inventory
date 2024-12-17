@@ -10,11 +10,14 @@ use Filament\Tables\Table;
 use App\Models\OutboundProduct;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\Summarizers\Sum;
 use App\Filament\Resources\OutboundProductResource\Pages;
 
 class OutboundProductResource extends Resource
@@ -23,6 +26,7 @@ class OutboundProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-circle';
     protected static ?string $navigationGroup = 'In | Out Product';
+    protected static ?string $navigationLabel = 'Barang Keluar';
 
     public static function form(Form $form): Form
     {
@@ -52,7 +56,6 @@ class OutboundProductResource extends Resource
                                 $pricePerUnit = $product->selling_price;
                                 $quantity = $get('product_quantity') ?? 1;
                                 
-                                // Add stock availability validation
                                 $set('max_quantity', $product->stock);
                                 
                                 $set('product_selling_price', $pricePerUnit);
@@ -220,16 +223,37 @@ class OutboundProductResource extends Resource
             ->columns([
                 TextColumn::make('date')->label('Date')->sortable(),
                 TextColumn::make('outbound_product_number')->label('Outbound Number')->sortable(),
-                TextColumn::make('quantity_total')->label('Total Quantity')->sortable(),
+                TextColumn::make('quantity_total')
+                ->label('Total Quantity')
+                ->sortable()
+                ->summarize(Sum::make()
+                ->prefix('Total : ')
+                ),  
                 TextColumn::make('total')
                     ->label('Total')
                     ->formatStateUsing(function ($state) {
                         return 'Rp ' . number_format((float)$state, 0, ',', '.');
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->summarize(Sum::make()->money('idr')
+                    ->prefix('Total : ')
+                    ),  
             ])
             ->defaultSort('created_at', 'desc')
-            ->filters([])
+            ->filters([
+                Filter::make('Rentang Tanggal')
+                ->form([
+                    DatePicker::make('tanggal_awal')->label('Tanggal Awal'),
+                    DatePicker::make('tanggal_akhir')->label('Tanggal Akhir'),
+                ])
+                ->query(function ($query, array $data) {
+                    return $query
+                        ->when($data['tanggal_awal'] ?? null, 
+                            fn ($query, $date) => $query->where('date', '>=', $date))
+                        ->when($data['tanggal_akhir'] ?? null, 
+                            fn ($query, $date) => $query->where('date', '<=', $date));
+                }),
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
