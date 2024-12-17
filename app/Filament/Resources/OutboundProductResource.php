@@ -134,6 +134,7 @@ class OutboundProductResource extends Resource
                     TextInput::make('date')
                         ->type('date')
                         ->required()
+                        ->readOnly()
                         ->default(now()->toDateString()),
                 ]),
                 
