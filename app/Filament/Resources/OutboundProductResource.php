@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\OutboundProductResource\Widgets\OutboundProductWidget;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Product;
@@ -27,7 +28,6 @@ class OutboundProductResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-circle';
     protected static ?string $navigationGroup = 'In | Out Product';
     protected static ?string $navigationLabel = 'Barang Keluar';
-
     public static function form(Form $form): Form
     {
         $products = Product::all();
