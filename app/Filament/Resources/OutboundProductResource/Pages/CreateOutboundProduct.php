@@ -2,50 +2,77 @@
 
 namespace App\Filament\Resources\OutboundProductResource\Pages;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use App\Services\PrinterService;
+use Filament\Notifications\Actions\Action;
 use Filament\Actions\CreateAction;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\OutboundProductResource;
-use App\Models\Product;
+
 class CreateOutboundProduct extends CreateRecord
 {
     protected static string $resource = OutboundProductResource::class;
 
     protected function afterCreate(): void
     {
-        // Start a database transaction to ensure data integrity
         DB::beginTransaction();
 
         try {
-            // Get the created outbound product
             $outboundProduct = $this->record;
 
-            // Iterate through the pivot outbound products
             foreach ($outboundProduct->PivotOutboundProduct as $pivotProduct) {
-                // Find the corresponding product
                 $product = Product::findOrFail($pivotProduct->product_id);
 
-                // Reduce the stock
                 $product->stock -= $pivotProduct->product_quantity;
 
-                // Ensure stock doesn't go negative
                 $product->stock = max(0, $product->stock);
 
-                // Save the updated product
                 $product->save();
             }
 
-            // Commit the transaction
             DB::commit();
         } catch (\Exception $e) {
-            // Rollback the transaction if something goes wrong
             DB::rollBack();
 
-            // Optionally, you can log the error
             \Log::error('Error reducing product stock: ' . $e->getMessage());
 
-            // Throw the exception to prevent record creation
             throw $e;
         }
+
+        $invoice = $this->record;
+        $printService = new PrinterService();
+
+        try {
+            $printService->printFirstReceipt($invoice);
+
+            Notification::make('print-second')
+                ->title('Nota pertama telah dicetak')
+                ->body('Silakan sobek nota pertama, kemudian klik tombol "Cetak Nota Kedua"')
+                ->persistent() 
+                ->actions([
+                    Action::make('printSecond')
+                        ->label('Cetak Nota Kedua')
+                        ->button()
+                        ->color('primary')
+                        ->url(route('print.second', ['invoice' => $invoice->id]))
+                ])
+                ->success()
+                ->persistent() 
+                ->send();
+
+        } catch (\Exception $e) {
+            Log::error('Error saat mencetak nota pertama: ' . $e->getMessage());
+            
+            Notification::make('error')
+                ->title('Gagal mencetak struk')
+                ->danger()
+                ->body($e->getMessage())
+                ->persistent() 
+                ->send();
+        }
+        
     }
 }
