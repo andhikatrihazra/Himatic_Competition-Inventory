@@ -8,7 +8,7 @@ Welcome to the official repository for **Himatic Competition Season 1**! This pr
 
 ## 🚀 Installation Steps
 
-Follow these steps to set up the project on your local machine:
+Follow these steps to set up the project on your local machine / device:
 
 1. **Clone the Repository**:
    ```bash
