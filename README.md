@@ -30,7 +30,7 @@ Follow these steps to set up the project on your local machine / device:
    cp .env.example .env
    ```
    
-5. File .env:
+5. **File .env**:
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
@@ -53,21 +53,25 @@ Follow these steps to set up the project on your local machine / device:
    php artisan make:filament-user
    ```
 
-9. **Generate Role And Permission**:
+9. **Make Super Admin**:
+   ```bash
+    php artisan shield:super-admin
+   ``
+
+10. **Generate Role And Permission**:
    ```bash
    php artisan shield:generate --all
    ```
 
-10. **Make Super Admin**:
-   ```bash
-    php artisan shield:super-admin
-   ```
-
-Last. **Serve The Application**:
+11. **Serve The Application**:
    ```bash
     php artisan serve
    ```
 
+11. **If U Just See Laporan Page**:
+   ```bash
+    Re Run Step Number 9 and 10
+   ```
 ---
 
 ## 📚 Additional Resources
