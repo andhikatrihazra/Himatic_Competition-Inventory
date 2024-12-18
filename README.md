@@ -30,13 +30,13 @@ Follow these steps to set up the project on your local machine:
    cp .env.example .env
    ```
    
-5. **File .env**:
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=Himatic_Competition_Inventory
-DB_USERNAME=username
-DB_PASSWORD=password
+5. File .env:
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=Himatic_Competition_Inventory
+    DB_USERNAME=username
+    DB_PASSWORD=password
 
 6. **Generate Application Key**:
    ```bash
@@ -46,11 +46,6 @@ DB_PASSWORD=password
 7. **Database Migration**:
    ```bash
    php artisan migrate
-   ```
-
-8. **Make User Account**:
-   ```bash
-   php artisan make:filament-user
    ```
 
 8. **Make User Account**:
