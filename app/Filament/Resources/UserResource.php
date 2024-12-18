@@ -34,7 +34,7 @@ class UserResource extends Resource
     {
         return $form
         ->schema([
-            Fieldset::make('User Details') // Membuat grup untuk form
+            Fieldset::make('User Details') 
                 ->schema([
                     TextInput::make('name')
                         ->required()
@@ -55,10 +55,10 @@ class UserResource extends Resource
                     
         
                     Select::make('roles')
-                        ->relationship('roles', 'name') // Menarik data dari relationship
+                        ->relationship('roles', 'name') 
                         ->required(),
                 ])
-                ->columns(1), // Atur fieldset menjadi 1 kolom
+                ->columns(1), 
         ]);
         
     }
@@ -79,9 +79,9 @@ class UserResource extends Resource
 
                     BadgeColumn::make('roles.name')
                     ->color(fn ($state) => match ($state) {
-                        'admin' => 'danger', // Red for admin
-                        'user' => 'primary', // Blue for user admin
-                        default => 'gray', // Default color for other roles
+                        'super_admin' => 'danger', 
+                        'User' => 'primary', 
+                        default => 'gray', 
                     })
                 
                 
