@@ -1,8 +1,8 @@
 # 🌟 Himatic Competition Season 1
 
-### 🏆 Andhika Tri Hazra - TUAN MUD Team
+### 🏆 Andhika Tri Hazra - TUAN MUDA Team
 
-Welcome to the official repository for **Himatic Competition Season 1**! This project showcases the work of the TUAN MUD Team, led by Andhika Tri Hazra. Below are the steps to get started.
+Welcome to the official repository for **Himatic Competition Season 1**! This project showcases the work of the TUAN MUDA Team,by Andhika Tri Hazra. Below are the steps to get started.
 
 ---
 
