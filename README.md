@@ -31,12 +31,14 @@ Follow these steps to set up the project on your local machine / device:
    ```
    
 5. **File .env**:
+   ```bash
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
     DB_DATABASE=Himatic_Competition_Inventory
     DB_USERNAME=username
     DB_PASSWORD=password
+   ```
 
 6. **Generate Application Key**:
    ```bash
@@ -56,7 +58,7 @@ Follow these steps to set up the project on your local machine / device:
 9. **Make Super Admin**:
    ```bash
     php artisan shield:super-admin
-   ``
+   ```
 
 10. **Generate Role And Permission**:
    ```bash
