@@ -72,7 +72,7 @@ Follow these steps to set up the project on your local machine / device:
 
 11. **If U Just See Laporan Page**:
    ```bash
-    Re Run Step Number 9 and 10
+    Re Run Step Number 10 and 9
    ```
 ---
 
